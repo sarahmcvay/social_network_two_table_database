@@ -1,84 +1,111 @@
-# Database Project Starter
+TWO TABLES DESIGN RECIPE
 
-This is a starter project for you to use to start your Python database projects.
+USER STORIES:
+As a social network user,
+--So I can have my information registered,
+--I'd like to have a user account with my email address.
 
-There are two videos to support:
+As a social network user,
+--So I can have my information registered,
+--I'd like to have a user account with my username.
 
-* [A demonstration of setting up the project](https://www.youtube.com/watch?v=KMEt4GgWJXc)
-* [A walkthrough of the project codebase](https://youtu.be/KMEt4GgWJXc?t=460)
+As a social network user,
+--So I can write on my timeline,
+--I'd like to create posts associated with my user account.
 
-## Setup
+As a social network user,
+--So I can write on my timeline,
+--I'd like each of my posts to have a title and a content.
 
-### 1. Clone the repository to your local machine
+As a social network user,
+--So I can know who reads my posts,
+--I'd like each of my posts to have a number of views.
+
+USER NOUNS: user account, email, username, timeline, posts, title, content, views
+
+INFERED TABLE:
+| Record            | Properties            |
+|--------------     |-----------------      |
+| user account      | email, username       |
+| posts             | title, content, views | 
+
+FIRST TABLE NAME:(always plural)
+users
+TABLE COLUMNS: (column name and data type)
+    id: SERIAL
+    username: text
+    email: text
+
+SECOND TABLE NAME:(always plural)
+posts
+TABLE COLUMNS: (column name and data type)
+    id: SERIAL
+    title: text
+    content: text
+    views: int
+
+TABLES RELATIONSHIP
+Identify cardinality of the relationship: one-to-one, one-to-many or many-to-many
+option a - users can have many posts, so posts belongs to users 
+option b - posts can have many users... incorrect. 
+
+As such the foreign key is on posts, the child table. 
+
+```sql
+WRITE SQL
+    file: social_network.sql
+----parent table, create table without foreign key first
+    CREATE TABLE users (
+        id SERIAL PRIMARY KEY,
+        username text,
+        email text
+    );
+
+    CREATE TABLE posts (
+        id SERIAL PRIMARY KEY,
+        title text,
+        content text,
+        views int,
+        user_id datatype,
+        constraint fk_user foreign key(user_id)
+            references users(id)
+            on delete cascade
+    );
+
+INPUT file.SQL CODE
+INPUT SEED INFO
+
+RUN SQL
+    psql social_network < path/social_network.sql
 ```
-; git clone git@github.com:makersacademy/databases-in-python-project-starter.git YOUR_PROJECT_NAME
-```
+```python
+EXAMPLE TESTS-link to user stories
 
-> Or, if you don't have SSH keys set up
-```
-; git clone https://github.com/makersacademy/databases-in-python-project-starter.git YOUR_PROJECT_NAME
-```
-
-### 2. Enter the directory
-```
-; cd YOUR_PROJECT_NAME
-```
-
-### 3. Set up the virtual environment
-```
-; python -m venv databases-starter-venv
-```
-
-### 4. Activate the virtual environment
-```
-; source databases-starter-venv/bin/activate 
-```
-
-
-### 5. Install dependencies
-```
-(databases-starter-venv); pip install -r requirements.txt
-```
-
-> Read below if you see an error with `python_full_version`
-
-### 6. Create the database
-```
-(databases-starter-venv); createdb YOUR_PROJECT_NAME
-```
-
-> `YOUR_PROJECT_NAME` can be anything you want it to be
-
-### 7. Change `DATABASE_NAME` to equal `YOUR_PROJECT_NAME`
-
-On line 11 of `lib/database_connection.py` you'll find this...
-
-```
-DATABASE_NAME = "DEFAULT_MAKERS_PROJECT" # <-- CHANGE THIS!
-```
-
-Change `DEFAULT_MAKERS_PROJECT` to whatever you chose for `YOUR_PROJECT_NAME`
-
-### 8. Run the tests - see below if you have any issues
-```
-(databases-starter-venv); pytest
-```
-> If the tests fail, see below
-
-### 9. Run the app
-```
-(databases-starter-venv); python app.py
-```
-
-<br>
-<details>
-  <summary>I get a <code>ModuleNotFoundError: No module named 'psycopg'</code></summary>
-  <br>
-If, after activating your <code>venv</code> and installing dependencies, you see this error when running <code>pytest</code>, please deactivate and reactivate your <code>venv</code>. This should solve the problem - if not, contact your coach.
-</details>
-<br>
-<details>
-  <summary>The tests fails and I see <code>Exception: Couldn't connect to the database DEFAULT_MAKERS_PROJECT!</code></summary>
-  <br>
-This error most likely means you need to edit line 11 in <code>lib/database_connection.py</code>. Go there and change <code>"DEFAULT_MAKERS_PROJECT"</code> to the name of the database you created in step 6.
-</details>
+"""PostRepository 
+Test that all posts can be read from the database 
+Showing that title content views and user_id is mapped correctly
+"""
+"""PostRepository
+Test we can find a single post 
+and that it has a title and contents and a user association
+"""
+"""PostRepository
+Test that posts can be created and associated with a user
+Shows title, content and views are stored
+"""
+"""UserRepository
+Test we can get a list of all User objects reflecting the seed data
+Showing that username and email is mapped correctly
+"""
+"""UserRepository
+Test we can find a single user object 
+and that it reflects the seed data correctly.
+"""
+"""UserRepository
+Test we can create a new user record in the database
+and that new data is stored correctly
+"""
+"""UserRepository
+Test we can remove a user record from the database.
+And the database reflects updated information. 
+"""
